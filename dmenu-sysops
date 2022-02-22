@@ -1,0 +1,9 @@
+#!/bin/bash
+. "$HOME/.scripts/dmenu/root"
+
+CHOICE=$(printf '%s\n' "Shutdown" "Reboot" | dm -p "Operation: ")
+
+case "$CHOICE" in
+	Shutdown)  /sbin/shutdown now ;;
+	Reboot) /sbin/rebooot ;;
+esac

@@ -1,0 +1,8 @@
+#!/bin/bash
+
+function dm() {
+	lines="-l 15"
+	font="-fn Inconsolata-11"
+	colors="-nb #2C323E -nf #9899a0 -sb #BF616A -sf #2C323E"
+	dmenu $lines $font $colors "$@" # quoting around $@ is important
+}
