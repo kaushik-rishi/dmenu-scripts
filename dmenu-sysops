@@ -1,9 +1,10 @@
 #!/bin/bash
 . "$HOME/.scripts/dmenu/root"
 
-CHOICE=$(printf '%s\n' "Shutdown" "Reboot" | dm -p "Operation: ")
+CHOICE=$(printf '%s\n' "Shutdown" "Reboot" "Suspend" | dm -p "Operation: ")
 
 case "$CHOICE" in
 	Shutdown)  /sbin/shutdown now ;;
 	Reboot) /sbin/rebooot ;;
+	Suspend) systemctl suspend;;
 esac
