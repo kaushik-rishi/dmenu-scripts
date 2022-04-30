@@ -4,7 +4,7 @@
 current_dpi=$(xfconf-query -c xsettings -p /Xft/DPI)
 dpi="$(printf '112\n96\n148' | dm -p "(current: $current_dpi) select dpi: ")"
 
-if [[ ! -z $dpi ]]; then
+if [[ -n $dpi ]]; then
 	xfconf-query -c xsettings -p /Xft/DPI -s "$dpi"
 else 
 	notify-send "ABORTING! You have not selected any DPI"

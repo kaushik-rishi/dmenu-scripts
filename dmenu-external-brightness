@@ -4,7 +4,7 @@ external_monitor="HDMI-1"
 brightness=$(echo "" | dmenu)
 
 
-if [[ ! -z $dpi ]]; then
+if [[ -n $brightness ]]; then
     xrandr --output "$external_monitor" --brightness "$brightness"    
 else 
 	notify-send "Please enter a brightness value between 0 and 1 🚀"
