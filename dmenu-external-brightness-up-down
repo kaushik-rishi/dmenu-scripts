@@ -1,0 +1,62 @@
+#!/usr/bin/python3
+
+"""
+Strictly unix compliant
+Required programs:
+notify-send (not using any python library for notifications)
+github.com/kaushik-rishi/.scripts -> cloned into home directory
+"""
+
+from hashlib import new
+from pathlib import Path
+import subprocess
+import os
+import sys
+
+monitor = "HDMI-1"
+
+
+def notify(message):
+    subprocess.run(f"notify-send '{message}'", shell=True)
+
+
+scripts_folder = os.path.join(str(Path.home()), ".scripts")
+dmenu_scripts_folder = os.path.join(scripts_folder, "dmenu")
+external_monitor_utils_folder = os.path.join(
+    scripts_folder, "utils", "external-monitor"
+)
+
+# TODO: handle errors
+brightness = subprocess.run(
+    f"{external_monitor_utils_folder}/brightness", capture_output=True
+).stdout.decode(encoding="utf-8")
+brightness = float(brightness)
+
+if len(sys.argv) < 2:
+    notify("Required argument: up/down")
+    sys.exit(1)
+
+choice = sys.argv[1]
+if choice not in ["up", "down"]:
+    notify(
+        "Invalid argument: increase the brightness (up) / Decrease the brightness (down)"
+    )
+    sys.exit(1)
+
+step_value = 0.05
+if choice == "up":
+    # if brightness == 1:
+    #     notify("Already at max brightness")
+    #     sys.exit(1)
+    new_brightness_value = brightness + step_value
+else:
+    new_brightness_value = brightness - step_value
+
+# set the new brightness
+subprocess.run(
+    f"xrandr --output '{monitor}' --brightness '{new_brightness_value}'", shell=True
+)
+# subprocess.run(
+#     f"{dmenu_scripts_folder}/dmenu-external-brightness {new_brightness_value}",
+#     shell=True,
+# )
