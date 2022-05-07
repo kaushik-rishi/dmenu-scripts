@@ -1,12 +1,22 @@
 #!/bin/bash
 
 external_monitor="HDMI-1"
-brightness=$(echo "" | dmenu)
+brightness=$(printf "up\ndown\n" | dmenu)
+# brightness_control_utils="$HOME/.scripts/utils/external-monitor"
+brightness_control_utils="$HOME/.scripts/utils/external-monitor"
 
-
-if [[ -n $brightness ]]; then
-    xrandr --output "$external_monitor" --brightness "$brightness"    
-else 
-	notify-send "Please enter a brightness value between 0 and 1 🚀"
-fi
-echo "$brightness"
+case "$brightness" in
+	up) 
+        "$brightness_control_utils/brightness-command-control" up
+        ;;
+	down)  
+        "$brightness_control_utils/brightness-command-control" down
+        ;;
+    *)
+        if [[ -n $brightness ]]; then
+            echo "setting brightness to $brightness"
+            xrandr --output "$external_monitor" --brightness "$brightness"
+        else 
+            notify-send "Please enter a valid value (float) for brightness"
+        fi
+esac
