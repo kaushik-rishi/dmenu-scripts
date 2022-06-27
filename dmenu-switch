@@ -14,6 +14,7 @@ windows=$(echo "$windows" | \
 
 
 target=$(echo "$windows" | dm -i -p switch: | tr -s '[:blank:]' | cut -d ' ' -f 2-)
+echo "$target"
 
 if [[ -n $target ]]; then
     wmctrl -a "$target"

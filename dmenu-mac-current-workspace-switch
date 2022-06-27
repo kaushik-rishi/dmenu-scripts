@@ -1,0 +1,30 @@
+#!/usr/bin/python3
+
+import subprocess
+import shlex
+
+
+def exec(cmd):
+    ps = subprocess.Popen(
+        cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    )
+    output = ps.communicate()[0]
+    return output.decode(encoding="utf-8").strip()
+
+
+wmctrl_output = exec("wmctrl -xl")
+current_workspace_id = int(exec("wmctrl -d | grep '*' | cut -d ' ' -f1"))
+
+current_workspace_windows = []
+for window_line in wmctrl_output.split("\n"):
+    window_details = window_line.split(maxsplit=4)
+    if int(window_details[1]) == current_workspace_id:
+        current_workspace_windows.append(window_details[-1])
+
+current_workspace_windows_dmenu_str = "\n".join(current_workspace_windows)
+
+selected_window = exec(
+    f"echo '{current_workspace_windows_dmenu_str}' | dmenu -l 15 -fn 'Inconsolata-11'  -nb '#2C323E' -nf '#9899a0' -sb '#BF616A' -sf '#2C323E'"
+)
+print(selected_window)
+exec(f"wmctrl -a {shlex.quote(selected_window)}")
