@@ -17,11 +17,25 @@ current_workspace_id = int(exec("wmctrl -d | grep '*' | cut -d ' ' -f1"))
 
 current_workspace_windows = []
 for window_line in wmctrl_output.split("\n"):
+    """
+    [WORKING FOR] 0x06a00003  2 sublime_text.Sublime_text  IRONHEART ~/Desktop/lc-discord-notify/error-log - Sublime Text (UNREGISTERED)
+    [NOT WORKING FOR] 0x07000001  2 mongodb compass.MongoDB Compass  IRONHEART MongoDB Compass - cluster0.k3ylw.mongodb.net/lcDiscordNotifyDB.users
     window_details = window_line.split(maxsplit=4)
+    print(window_details)
     if int(window_details[1]) == current_workspace_id:
         current_workspace_windows.append(window_details[-1])
+    NEW LOGIC: try splitting on IRONHEART
+    """
+    window_workspace_id = int(window_line.split(maxsplit=4)[1])
+    window_name = window_line.split("IRONHEART", maxsplit=1)[
+        -1
+    ]  # max split is because, window names also contain home directory name sometimes in title bar
+    if window_workspace_id == current_workspace_id:
+        current_workspace_windows.append(window_name)
+    print(window_name)
 
 current_workspace_windows_dmenu_str = "\n".join(current_workspace_windows)
+print(current_workspace_windows)
 
 selected_window = exec(
     f"echo '{current_workspace_windows_dmenu_str}' | dmenu -l 15 -fn 'Inconsolata-11'  -nb '#2C323E' -nf '#9899a0' -sb '#BF616A' -sf '#2C323E'"
