@@ -1,0 +1,38 @@
+#!/usr/bin/python3
+
+import subprocess
+import shlex
+
+
+def exec(cmd):
+    ps = subprocess.Popen(
+        cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
+    )
+    output = ps.communicate()[0]
+    return output.decode(encoding="utf-8").strip()
+
+
+current_window_name = exec("xdotool getwindowfocus getwindowname")
+current_window_app_id = None
+wmctrl_xl_output = exec("wmctrl -xl")
+for line in wmctrl_xl_output.split("\n"):
+    window_details = line.split(maxsplit=4)
+    if window_details[-1] == current_window_name:
+        current_window_app_id = window_details[2]
+
+same_app_windows = []
+for line in wmctrl_xl_output.split("\n"):
+    window_details = line.split(maxsplit=4)
+    if window_details[2] == current_window_app_id:
+        same_app_windows.append(window_details[-1])
+
+print(same_app_windows)
+
+same_app_windows_dmenu_str = "\n".join(same_app_windows)
+print(same_app_windows)
+selected_window = exec(
+    f"echo '{same_app_windows_dmenu_str}' | dmenu -l 15 -fn 'Inconsolata-11'  -nb '#2C323E' -nf '#9899a0' -sb '#BF616A' -sf '#2C323E'"
+)
+
+print(selected_window)
+exec(f"wmctrl -a {shlex.quote(selected_window)}")
