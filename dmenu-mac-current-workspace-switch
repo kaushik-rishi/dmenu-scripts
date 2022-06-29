@@ -12,7 +12,7 @@ def exec(cmd):
     return output.decode(encoding="utf-8").strip()
 
 
-wmctrl_output = exec("wmctrl -xl")
+wmctrl_output = exec("wmctrl -l")
 current_workspace_id = int(exec("wmctrl -d | grep '*' | cut -d ' ' -f1"))
 
 current_workspace_windows = []
@@ -26,8 +26,21 @@ for window_line in wmctrl_output.split("\n"):
         current_workspace_windows.append(window_details[-1])
     NEW LOGIC: try splitting on IRONHEART
     """
+
+    """
+    WORKING: debugged from the above logic
     window_workspace_id = int(window_line.split(maxsplit=4)[1])
     window_name = window_line.split("IRONHEART", maxsplit=1)[
+        -1
+    ]  # max split is because, window names also contain home directory name sometimes in title bar
+    if window_workspace_id == current_workspace_id:
+        current_workspace_windows.append(window_name)
+    """
+
+    # better logic, exclude the id's that cause the problem from the output by using "wmctrl -x" instead of "wmctrl -xl"
+    window_details = window_line.split(maxsplit=3)
+    window_workspace_id = int(window_details[1])
+    window_name = window_details[
         -1
     ]  # max split is because, window names also contain home directory name sometimes in title bar
     if window_workspace_id == current_workspace_id:
